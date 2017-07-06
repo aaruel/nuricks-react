@@ -1,9 +1,11 @@
 const express = require('express')
 const next = require('next')
+const routes = require('./routes.js')
 
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
-const handle = app.getRequestHandler()
+
+const handle = routes.getRequestHandler(app)
 
 const mobxReact = require('mobx-react');
 

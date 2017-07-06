@@ -42,10 +42,11 @@ class NavBar extends React.Component {
     componentDidMount() {
         Backend.getAuth()
         .then(response => {
-            this.setState({loading: false})
-            this.props.loaded();
             if (response.musician_info) {
                 console.log("musician");
+                if (document.location.pathname == "/") {
+                    return document.location.pathname = "/dashboard";
+                }
                 return this.props.store.setUser(response.musician_info, true);
             }
             else if (response.user_info) {
@@ -53,6 +54,9 @@ class NavBar extends React.Component {
                 return this.props.store.setUser(response.user_info, false);
             }
             return console.log("no one");
+        }).then(() => {
+            this.setState({loading: false})
+            this.props.loaded();
         });
 
         // attach listener to fade out nav bar
@@ -68,6 +72,7 @@ class NavBar extends React.Component {
 
     render() {
         var bar = null;
+        var home = "/";
 
         // Loading state -> Musician Nav / User Nav / Logged Out Nav
         if (this.state.loading) {
@@ -79,6 +84,7 @@ class NavBar extends React.Component {
         }
         // Musician Nav
         else if (this.props.store.user.isMusician) {
+            home = "/dashboard";
             bar = (
                 <ul className="pages">
                     <li style={{fontWeight: 900}}><a>{this.props.store.user.firstName}</a></li>
@@ -112,7 +118,7 @@ class NavBar extends React.Component {
         <nav id="mainNav" style={{top: 0, opacity: 1}}>
         	<div className="navbar">
         	</div>
-            <Link href="/">
+            <Link href={home}>
             	<a className="logo" onMouseEnter={()=>this.logoHover(true)} onMouseLeave={()=>this.logoHover(false)}>
                     {this.state.logoText}
                 </a>
@@ -122,6 +128,7 @@ class NavBar extends React.Component {
     }
 }
 
+// MAIN CONTENT
 export default class Content extends React.Component {
     constructor(props) {
         super(props);
