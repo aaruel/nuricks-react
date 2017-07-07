@@ -1,7 +1,8 @@
 import React from 'react';
 
 import Popup from './Popup.js';
-import { LoadingRelative } from '../components/Loading.js';
+import BuyTicket from './BuyTicket.js';
+import { LoadingRelative } from './Loading.js';
 
 import Backend from '../components/Backend.js';
 import { inject, observer } from 'mobx-react';
@@ -66,7 +67,8 @@ class Shows extends React.Component {
     componentDidMount() {
         // on store change fire
         autorun(() => {
-            const fbid = this.props.store.user.fbid;
+            const user = this.props.user || this.props.store.user;
+            const fbid = user.fbid;
             if (this.state.loading && fbid) {
                 Promise.all([
                     Backend.getPossibleEvents(),
@@ -115,7 +117,7 @@ class Shows extends React.Component {
     }
 
     render() {
-        const user = this.props.store.user;
+        const user = this.props.user || this.props.store.user;
         var page = null;
 
         if (this.state.loading) {

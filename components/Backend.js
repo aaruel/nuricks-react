@@ -29,4 +29,8 @@ export default class Backend {
     static async getEventInfoFromID(id) {
         return await Backend.request(`${BACKEND_URL}/events/getEventInfoFromID/${id}`)
     }
+
+    static async getMusicianFromURL(id) {
+        return await Backend.request(`${BACKEND_URL}/musicians/getMusicianInfoFromURL/${id}`)
+    }
 }

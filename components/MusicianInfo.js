@@ -62,14 +62,24 @@ class MusicianInfo extends React.Component {
             )
         }
 
-        return (
-            <div className="container half bio">
+        var headInfo = (
+            <div>
                 <h2>Share your profile with fans:</h2>
                 <Link route="musician" params={{slug: user.urlValue}}>
                     <a>http://www.nrshows.com/musician/{user.urlValue}</a>
                 </Link>
                 {email}
                 {phoneNumber}
+            </div>
+        )
+
+        if (this.props._public) {
+            headInfo = null;
+        }
+
+        return (
+            <div className="container half bio">
+                {headInfo}
                 <h1 id="stage-name" className="title">{user.stageName}</h1>
                 <div id="bio" style={{whiteSpace: "pre-wrap"}}>{user.bio}
                     {this.state.playUrl.map(

@@ -9,39 +9,40 @@ import { inject, observer } from 'mobx-react';
 class MusicianPanel extends React.Component {
     constructor(props) {
         super(props);
+        var user = this.props.user || this.props.store.user;
         this.state = {
             editing: false,
             biolinks: [
-                {cls: "fa fa-instagram",   val: () => (this.props.store.user.instagramLink)},
-                {cls: "fa fa-facebook",    val: () => (this.props.store.user.facebookLink)},
-                {cls: "fa fa-youtube-play",val: () => (this.props.store.user.youtubeLink)},
-                {cls: "fa fa-soundcloud",  val: () => (this.props.store.user.soundcloudLink)}
+                {cls: "fa fa-instagram",   val: () => (user.instagramLink)},
+                {cls: "fa fa-facebook",    val: () => (user.facebookLink)},
+                {cls: "fa fa-youtube-play",val: () => (user.youtubeLink)},
+                {cls: "fa fa-soundcloud",  val: () => (user.soundcloudLink)}
             ],
             bioEditLinks: [
                 {
                     id: "instagram-url",
                     placeholder: "Instagram",
-                    val: () => (this.props.store.user.instagramLink)
+                    val: () => (user.instagramLink)
                 },
                 {
                     id: "facebook-url",
                     placeholder: "Facebook",
-                    val: () => (this.props.store.user.facebookLink)
+                    val: () => (user.facebookLink)
                 },
                 {
                     id: "youtube-url",
                     placeholder: "Youtube",
-                    val: () => (this.props.store.user.youtubeLink)
+                    val: () => (user.youtubeLink)
                 },
                 {
                     id: "soundcloud-url",
                     placeholder: "Soundcloud",
-                    val: () => (this.props.store.user.soundcloudLink)
+                    val: () => (user.soundcloudLink)
                 },
                 {
                     id: "profile-url",
                     placeholder: "Profile Picture URL",
-                    val: () => (this.props.store.user.picture_url)
+                    val: () => (user.picture_url)
                 }
             ]
         }
@@ -57,11 +58,13 @@ class MusicianPanel extends React.Component {
 
     // Panel render
     render() {
+        var user = this.props.user || this.props.store.user;
+
         const bannerStyle = {
             backgroundImage: `url("/static/banner.jpg")`
         }
         const bannerPfP = {
-            backgroundImage: `url("${this.props.store.user.picture_url}")`
+            backgroundImage: `url("${user.picture_url}")`
         }
         var editButton = (<span onClick={this.toggleEditing.bind(this)} className="edit">EDIT <i className="fa fa-edit" aria-hidden="true"></i></span>);
         if (this.props._public) {
