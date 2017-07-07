@@ -88,7 +88,7 @@ class NavBar extends React.Component {
             bar = (
                 <ul className="pages">
                     <li style={{fontWeight: 900}}><a>{this.props.store.user.firstName}</a></li>
-                    <li><a>Account</a></li>
+                    <li><Link href="/account"><a>Account</a></Link></li>
             		<li style={{fontWeight: 100}}><Link href="/dashboard"><a>Musician Dashboard</a></Link></li>
                     <li style={{fontWeight: 100}} onClick={this.logoutEvent}><a>logout</a></li>
                 </ul>

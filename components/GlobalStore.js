@@ -24,6 +24,19 @@ class GlobalStore {
             ...user
         }
     }
+
+    @action setProps = (obj) => {
+        this.user = {
+            ...this.user,
+            ...obj
+        }
+    }
+
+    @action removeProp = (prop) => {
+        const copy = this.user;
+        copy[prop] = null;
+        this.user = copy;
+    }
 }
 
 export function initStore() {
