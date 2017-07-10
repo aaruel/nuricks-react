@@ -9,11 +9,19 @@ export default class Popup extends React.Component {
         this.state = {};
     }
 
-    static trigger() {
-        fadeIn(".popupWrapper");
+    static trigger(id) {
+        fadeIn(id);
         setTimeout(() => {
-            fadeOut(".popupWrapper");
+            fadeOut(id);
         }, 5000);
+    }
+
+    custom(text) {
+        return (
+            <div className="popup puSuccess">
+                {text}
+            </div>
+        );
     }
 
     render() {
@@ -34,8 +42,11 @@ export default class Popup extends React.Component {
             	</div>
             )
         }
+        if (this.props.type == "custom") {
+            cont = this.custom(this.props.text);
+        }
         return (
-            <div className="popupWrapper" style={{opacity: 0, pointerEvents: "none"}}>
+            <div id={this.props.id} className="popupWrapper" style={{opacity: 0, pointerEvents: "none"}}>
             	{cont}
             </div>
         );

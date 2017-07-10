@@ -278,6 +278,7 @@ class Account extends React.Component {
 
         return (
             <div>
+                <h1 className="title">Account</h1>
                 {display}
                 <button className="deleteProfile"><i className="fa fa-times-circle"></i> Delete Profile</button>
             </div>
