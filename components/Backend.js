@@ -35,6 +35,14 @@ export default class Backend {
         return await Backend.request(`${BACKEND_URL}/events/getEventInfoFromID/${id}`)
     }
 
+    static async updateEvent(copy) {
+        return await Backend.request(`${BACKEND_URL}/events/updateEventInfo`, {
+            "method": "POST",
+            headers: new Headers({"Content-Type": "application/json"}),
+            "body": JSON.stringify(copy)
+        });
+    }
+
     static async createEvent(copy) {
         return await Backend.request(`${BACKEND_URL}/events/createEvent`, {
             "method": "POST",

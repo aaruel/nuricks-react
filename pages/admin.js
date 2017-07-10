@@ -36,6 +36,7 @@ class AdminLogin extends React.Component {
 class ShowCard extends React.Component {
     constructor(props) {
         super(props);
+        this.copy = this.props._event;
         this.state = {};
     }
 
@@ -45,17 +46,46 @@ class ShowCard extends React.Component {
         }
     }
 
+    changeCollector(e) {
+        this.copy[e.target.id] = e.target.innerHTML;
+    }
+
+    async editEvent() {
+        this.copy.eventDate = new Date(this.copy.eventDate);
+        const res = await Backend.updateEvent(this.copy);
+        if (res.status == "1") {
+            Popup.trigger("#eventEdit");
+        }
+    }
+
     render() {
         return (
             <div className="showBlock SBVertical">
                 <a style={{backgroundImage: `url(${this.props._event.image_url})`}} className="showImg"></a>
                 <div className="showDetails">
-                    <h1><span ref={this.cEdit}>{this.props._event.eventName}</span></h1>
-                    <h2>Headliner: <span ref={this.cEdit}>{this.props._event.headliner}</span></h2>
-                    <h3>Address: <span ref={this.cEdit}>{this.props._event.street_name}</span>, <span ref={this.cEdit}>{this.props._event.city}</span>, <span ref={this.cEdit}>{this.props._event.state}</span> <span ref={this.cEdit}>{this.props._event.zip_code}</span></h3>
-                    <h3>Venue: <span ref={this.cEdit}>{this.props._event.venue}</span></h3>
-                    <h3><span ref={this.cEdit}>{fmt(this.props._event.eventDate)}</span> &mdash; <span ref={this.cEdit}>${this.props._event.cost}</span></h3>
-                    <a><i className="fa fa-save"></i> Save</a>
+                    <h1>
+                        <span onInput={this.changeCollector.bind(this)} id="eventName" ref={this.cEdit}>{this.props._event.eventName}</span>
+                    </h1>
+                    <h2>
+                        Headliner:
+                        <span onInput={this.changeCollector.bind(this)} id="headliner" ref={this.cEdit}>{this.props._event.headliner}</span>
+                    </h2>
+                    <h3>
+                        Address:
+                        <span onInput={this.changeCollector.bind(this)} id="street_name" ref={this.cEdit}>{this.props._event.street_name}</span>,
+                        <span onInput={this.changeCollector.bind(this)} id="city" ref={this.cEdit}>{this.props._event.city}</span>,
+                        <span onInput={this.changeCollector.bind(this)} id="state" ref={this.cEdit}>{this.props._event.state}</span>
+                        <span onInput={this.changeCollector.bind(this)} id="zip_code" ref={this.cEdit}>{this.props._event.zip_code}</span>
+                    </h3>
+                    <h3>
+                        Venue:
+                        <span onInput={this.changeCollector.bind(this)} id="venue" ref={this.cEdit}>{this.props._event.venue}</span>
+                    </h3>
+                    <h3>
+                        <span onInput={this.changeCollector.bind(this)} id="eventDate" ref={this.cEdit}>{fmt(this.props._event.eventDate)}</span> &mdash;
+                        <span onInput={this.changeCollector.bind(this)} id="cost" ref={this.cEdit}>${this.props._event.cost}</span>
+                    </h3>
+                    <a onClick={this.editEvent.bind(this)}><i className="fa fa-save"></i> Save</a>
                 </div>
             </div>
         );
@@ -423,7 +453,7 @@ class AllTickets extends React.Component {
                 <table>
                     <thead>
                         <tr>
-                            <th>Ticketholder's Name</th>
+                            <th>Ticketholder&apos;s Name</th>
                             <th>Created Date</th>
                             <th>Tickets Sold</th>
                         </tr>
@@ -432,7 +462,7 @@ class AllTickets extends React.Component {
                         {this.state.tickets.map(
                             ticket => (<tr key={ticket.createdAt}>
                                 <td>{ticket.firstName} {ticket.lastName}</td>
-                                <td>{ticket.createdAt}</td>
+                                <td>{fmt(ticket.createdAt)}</td>
                                 <td>{ticket.numberSold}</td>
                             </tr>)
                         )}
