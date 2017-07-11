@@ -34,8 +34,13 @@ class NavBar extends React.Component {
     logoutEvent() {
         Backend.logout()
         .then(() => {
-            window.reload();
+            window.location.href = "/";
         });
+    }
+
+    complete() {
+        this.setState({loading: false})
+        this.props.loaded();
     }
 
     // clientside request to bundle JWT with request to get back correct auth info
@@ -53,18 +58,19 @@ class NavBar extends React.Component {
                 console.log("user");
                 return this.props.store.setUser(response.user_info, false);
             }
-            return console.log("no one");
-        }).then(() => {
-            this.setState({loading: false})
-            this.props.loaded();
-        });
-
+            else {
+                return console.log("no one");
+            }
+        }).then(this.complete.bind(this));
+        const mainNav = document.getElementById("mainNav");
         // attach listener to fade out nav bar
         window.addEventListener('scroll', function(e) {
             if (window.scrollY == 0) {
+                mainNav.style.pointerEvents = "auto";
                 fadeIn("#mainNav");
             }
             else {
+                mainNav.style.pointerEvents = "none";
                 fadeOut("#mainNav");
             }
         })
@@ -87,10 +93,31 @@ class NavBar extends React.Component {
             home = "/dashboard";
             bar = (
                 <ul className="pages">
-                    <li style={{fontWeight: 900}}><a>{this.props.store.user.firstName}</a></li>
-                    <li><Link href="/account"><a>Account</a></Link></li>
-            		<li style={{fontWeight: 100}}><Link href="/dashboard"><a>Musician Dashboard</a></Link></li>
-                    <li style={{fontWeight: 100}} onClick={this.logoutEvent}><a>logout</a></li>
+                    <li style={{fontWeight: 900}}>
+                        <a>{this.props.store.user.firstName}</a>
+                    </li>
+                    <li>
+                        <Link href="/account">
+                            <a>
+                                <span>Account</span>
+                                <i className="fa fa-user"></i>
+                            </a>
+                        </Link>
+                    </li>
+            		<li style={{fontWeight: 100}}>
+                        <Link href="/dashboard">
+                            <a>
+                                <span>Musician Dashboard</span>
+                                <i className="fa fa-music"></i>
+                            </a>
+                        </Link>
+                    </li>
+                    <li style={{fontWeight: 100}} onClick={this.logoutEvent}>
+                        <a>
+                            <span>logout</span>
+                            <i className="fa fa-sign-out"></i>
+                        </a>
+                    </li>
                 </ul>
             )
         }
@@ -99,8 +126,20 @@ class NavBar extends React.Component {
             bar = (
                 <ul className="pages">
                     <li style={{fontWeight: 900}}><a>{this.props.store.user.firstName}</a></li>
-                    <li><a>Account</a></li>
-                    <li onClick={this.logoutEvent} style={{fontWeight: 100}}><a>logout</a></li>
+                    <li>
+                        <Link href="/account">
+                            <a>
+                                <span>Account</span>
+                                <i className="fa fa-user"></i>
+                            </a>
+                        </Link>
+                    </li>
+                    <li onClick={this.logoutEvent} style={{fontWeight: 100}}>
+                        <a>
+                            <span>logout</span>
+                            <i className="fa fa-sign-out"></i>
+                        </a>
+                    </li>
                 </ul>
             )
         }
@@ -108,7 +147,12 @@ class NavBar extends React.Component {
         else {
             bar = (
                 <ul className="pages">
-                    <li style={{fontWeight: 900}} onClick={this.props.login} id="mLogin" className="login"><a>Login</a></li>
+                    <li style={{fontWeight: 900}} onClick={this.props.login} id="mLogin" className="login">
+                        <a>
+                            <span>Login</span>
+                            <i className="fa fa-sign-in"></i>
+                        </a>
+                    </li>
                 </ul>
             )
         }

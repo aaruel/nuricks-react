@@ -128,4 +128,36 @@ export default class Backend {
     static async getTransactionHistory(customer_id) {
         return await Backend.request(`${BACKEND_URL}/transactions/getTransactionsByID/${customer_id}`)
     }
+
+    static async initiateTransaction(numberOfTickets, amount, customerId, isUser, ticketId) {
+        return await Backend.request(`${BACKEND_URL}/transactions/initiateTransaction`, {
+            "method": "POST",
+            "headers": new Headers({"Content-Type": "application/json"}),
+            "body": JSON.stringify({
+                numberOfTickets, amount, customerId, isUser, ticketId
+            })
+        })
+    }
+
+    static async sendEmail(event, user, musician, numInParty, t_id) {
+        const body = {
+            headliner: event.headliner,
+            musicianName: musician,
+            eventDate: event.eventDate,
+            doorsOpen: event.doorsOpen,
+            ageRestriction: event.ageRequirement,
+            venueName: event.venue,
+            streetName: event.street_name,
+            address: `${event.city}, ${event.state} ${event.zip_code}`,
+            eventURL: event.image_url,
+            guestName: `${user.firstName} ${user.lastName}`,
+            transaction_id: t_id,
+            numberInParty: numInParty
+        };
+        return await Backend.request(`${BACKEND_URL}/transactions/sendEmail`, {
+            "method": "POST",
+            "headers": new Headers({"Content-Type": "application/json"}),
+            "body": JSON.stringify(body)
+        })
+    }
 }

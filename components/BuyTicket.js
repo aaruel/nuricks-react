@@ -1,5 +1,8 @@
 import React from 'react';
 
+import Backend from './Backend.js';
+import Popup from './Popup.js';
+import { toJS } from 'mobx';
 import { inject, observer } from 'mobx-react';
 
 // Buy Tickets modal
@@ -23,6 +26,30 @@ class BuyTicket extends React.Component {
         if (amount >= 0) {
             this.setState({counter: amount, total: this.props.ticket.cost * amount})
         }
+    }
+
+    async confirm() {
+        const res = await Backend.initiateTransaction(
+            this.state.counter,
+            this.props.ticket.cost,
+            this.props.store.user.customer_id,
+            this.props.store.user.isUser ? true : false,
+            this.props.ticket.id
+        );
+        if (res.status == "1") {
+            Backend.sendEmail(
+                this.props.ticket,
+                toJS(this.props.store.user),
+                this.props.user.stageName,
+                this.state.counter,
+                res.transaction_id
+            );
+            Popup.trigger("#ticketSuccess");
+        }
+        else {
+            Popup.trigger("#ticketError");
+        }
+        this.props.close();
     }
 
     render() {
@@ -53,7 +80,7 @@ class BuyTicket extends React.Component {
                     <h2>Total: ${this.state.total}</h2>
                     <h3>Tickets will be sent to: {this.props.store.user.email}</h3>
                     <h3>Payment method: {p_method}</h3>
-                    <button>Confirm</button>
+                    <button onClick={this.confirm.bind(this)}>Confirm</button>
                 </div>
             </div>
         );

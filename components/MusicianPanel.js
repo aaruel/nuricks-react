@@ -1,7 +1,9 @@
 import React from 'react';
 
 import Popup from './Popup.js';
+import Backend from './Backend.js';
 
+import { toJS } from 'mobx';
 import { inject, observer } from 'mobx-react';
 
 // MUSICIAN PANEL
@@ -13,46 +15,70 @@ class MusicianPanel extends React.Component {
         this.state = {
             editing: false,
             biolinks: [
-                {cls: "fa fa-instagram",   val: () => (user.instagramLink)},
-                {cls: "fa fa-facebook",    val: () => (user.facebookLink)},
-                {cls: "fa fa-youtube-play",val: () => (user.youtubeLink)},
-                {cls: "fa fa-soundcloud",  val: () => (user.soundcloudLink)}
+                {cls: "fa fa-instagram",   val: () => (this.getAttr("instagramLink"))},
+                {cls: "fa fa-facebook",    val: () => (this.getAttr("facebookLink"))},
+                {cls: "fa fa-youtube-play",val: () => (this.getAttr("youtubeLink"))},
+                {cls: "fa fa-soundcloud",  val: () => (this.getAttr("soundcloudLink"))}
             ],
             bioEditLinks: [
                 {
                     id: "instagram-url",
                     placeholder: "Instagram",
-                    val: () => (user.instagramLink)
+                    val: () => (this.getAttr("instagramLink"))
                 },
                 {
                     id: "facebook-url",
                     placeholder: "Facebook",
-                    val: () => (user.facebookLink)
+                    val: () => (this.getAttr("facebookLink"))
                 },
                 {
                     id: "youtube-url",
                     placeholder: "Youtube",
-                    val: () => (user.youtubeLink)
+                    val: () => (this.getAttr("youtubeLink"))
                 },
                 {
                     id: "soundcloud-url",
                     placeholder: "Soundcloud",
-                    val: () => (user.soundcloudLink)
+                    val: () => (this.getAttr("soundcloudLink"))
                 },
                 {
                     id: "profile-url",
                     placeholder: "Profile Picture URL",
-                    val: () => (user.picture_url)
+                    val: () => (this.getAttr("picture_url"))
                 }
             ]
         }
     }
 
+    // Get live attributes
+    getAttr(attr) {
+        const user = this.props.user || this.props.store.user;
+        return user[attr];
+    }
+
     // Panel edit toggle
-    toggleEditing() {
+    async toggleEditing() {
+        // save route
         if (this.state.editing) {
-            Popup.trigger();
+            // copy observable into JSON
+            const _user = toJS(this.props.store.user);
+            _user.instagramLink = document.getElementById("instagram-url").value;
+            _user.facebookLink = document.getElementById("facebook-url").value;
+            _user.youtubeLink = document.getElementById("youtube-url").value;
+            _user.soundcloudLink = document.getElementById("soundcloud-url").value;
+            _user.picture_url = document.getElementById("profile-url").value;
+            _user.email = document.getElementById("artistEmail").innerHTML;
+            _user.phoneNumber = document.getElementById("artistPhone").innerHTML;
+            _user.stageName = document.getElementById("stage-name").innerHTML;
+            // strip tags
+            _user.bio = (document.getElementById("bio").innerHTML).replace(/(<([^>]+)>)/ig,"");
+            const res = await Backend.saveMusician(_user);
+            if (res.status == "1") {
+                this.props.store.setUser(_user);
+                Popup.trigger("#editSuccess");
+            }
         }
+        this.props.toggleEditing(!this.state.editing);
         this.setState({editing: !this.state.editing});
     }
 
@@ -79,9 +105,9 @@ class MusicianPanel extends React.Component {
                     {this.state.biolinks.map(
                         l => {
                             if (l.val()) {
-                                return
-                                (<li key={l.cls}>
-                                    <a>
+                                return (
+                                <li key={l.cls}>
+                                    <a href={l.val()} target="_blank" data-url={l.val()}>
                                         <i className={l.cls}></i>
                                     </a>
                                 </li>);
@@ -117,7 +143,7 @@ class MusicianPanel extends React.Component {
         // Main banner render
         return (
             <div>
-                <Popup type="editSuccess" />
+                <Popup id="editSuccess" type="editSuccess" />
                 {banner}
             </div>
         );

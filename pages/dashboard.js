@@ -10,7 +10,11 @@ import MusicianInfo from '../components/MusicianInfo.js';
 class Dashboard extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {editing: false}
+    }
+
+    toggleEditing(s) {
+        this.setState({editing: s});
     }
 
     render () {
@@ -21,11 +25,11 @@ class Dashboard extends React.Component {
 
                     <h1 className="musicianTitle">Musician Dashboard</h1>
 
-                    <MusicianPanel />
+                    <MusicianPanel toggleEditing={this.toggleEditing.bind(this)} />
 
             		<div className="row">
 
-                        <MusicianInfo />
+                        <MusicianInfo editing={this.state.editing} />
 
                         <Shows />
 

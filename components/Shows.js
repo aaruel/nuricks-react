@@ -90,7 +90,8 @@ class Shows extends React.Component {
                                 shows: events.map(
                                     (s, i) => ({
                                         ...s.event_info,
-                                        numberSold: tickets.tickets[i].numberSold
+                                        numberSold: tickets.tickets[i].numberSold,
+                                        ticketId: tickets.tickets[i].id
                                     })
                                 )
                             });
@@ -109,8 +110,16 @@ class Shows extends React.Component {
     }
 
     buyTicketModalShow(e, buyout) {
-        const bo = buyout ? true : false;
-        this.setState({selectedTicket: e, buyout: bo})
+        if (!this.props.store.user.fbid) {
+            Popup.trigger("#noUser");
+        }
+        else if (!this.props.store.user.customer_id) {
+            Popup.trigger("#noPayment");
+        }
+        else {
+            const bo = buyout ? true : false;
+            this.setState({selectedTicket: e, buyout: bo});
+        }
     }
     buyTicketModalClose() {
         this.setState({selectedTicket: null});
@@ -136,7 +145,7 @@ class Shows extends React.Component {
             if (this.state.shows.length) {
                 var modal = null
                 if (this.state.selectedTicket) {
-                    modal = (<BuyTicket ticket={this.state.selectedTicket} buyout={this.state.buyout} close={this.buyTicketModalClose.bind(this)} />);
+                    modal = (<BuyTicket user={user} ticket={this.state.selectedTicket} buyout={this.state.buyout} close={this.buyTicketModalClose.bind(this)} />);
                 }
                 display = (
                     <div className="showList myShowsList">
@@ -260,6 +269,10 @@ class Shows extends React.Component {
 
         return (
         <div className="container half shows">
+            <Popup id="noUser" type="custom" text="You must be logged in to buy tickets" />
+            <Popup id="noPayment" type="custom" text="You must enter a payment method in your Account page" />
+            <Popup id="ticketSuccess" type="custom" text="Ticket(s) bought successfully. Check your email for a receipt" />
+            <Popup id="ticketError" type="custom" text="Could not complete your request, please contact an administrator" />
             {tabs}
         </div>)
     }

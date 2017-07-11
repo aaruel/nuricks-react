@@ -222,7 +222,7 @@ class AccountStage2 extends React.Component {
                     </thead>
                     <tbody>
                         {this.state.transactions.map(
-                            t => (<tr>
+                            t => (<tr key={t.createdAt + Math.random()*14110}>
                                     <td>Event #1</td>
                                     <td>{t.amount} + {t.serviceFeeAmount ? t.serviceFeeAmount : 0} Service Fee</td>
                                     <td>{t.createdAt}</td>

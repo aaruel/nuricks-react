@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Link } from '../routes.js';
+import Linkify from 'react-linkify';
 import SoundCloud from 'react-soundcloud-widget';
 
 import { inject, observer } from 'mobx-react';
@@ -10,7 +11,7 @@ import { inject, observer } from 'mobx-react';
 class MusicianInfo extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {playUrl: []}
+        this.state = {}
     }
 
     // Extract soundtrack link from bio
@@ -33,14 +34,17 @@ class MusicianInfo extends React.Component {
 
     // replace with bio load
     componentDidMount() {
-        const pu = this.state.playUrl;
-        const bio = "hey https://soundcloud.com/remi112/howdy-bitch-reupload";
-        this.setState({playUrl: pu.concat(this.soundcloudParser(bio))});
+    }
+
+    cEdit(e) {
+        if (e) {
+            e.contentEditable = this.props.editing || false;
+        }
     }
 
     // Musician panel render
     render() {
-        const user = this.props.store.user;
+        const user = this.props.user || this.props.store.user;
 
         var email = null;
         var phoneNumber = null;
@@ -49,7 +53,7 @@ class MusicianInfo extends React.Component {
             email = (
                 <div>
                     <label>Email: </label>
-                    <div id="artistEmail">{user.email}</div>
+                    <div ref={this.cEdit.bind(this)} id="artistEmail">{user.email}</div>
                 </div>
             )
         }
@@ -57,7 +61,7 @@ class MusicianInfo extends React.Component {
             phoneNumber = (
                 <div>
                     <label>Phone Number: </label>
-                    <div id="artistPhone">{user.phoneNumber}</div>
+                    <div ref={this.cEdit.bind(this)} id="artistPhone">{user.phoneNumber}</div>
                 </div>
             )
         }
@@ -80,13 +84,14 @@ class MusicianInfo extends React.Component {
         return (
             <div className="container half bio">
                 {headInfo}
-                <h1 id="stage-name" className="title">{user.stageName}</h1>
-                <div id="bio" style={{whiteSpace: "pre-wrap"}}>{user.bio}
-                    {this.state.playUrl.map(
-                        url => (
-                            <SoundCloud key={url} url={url} opts={{visual: true, auto_play: false}} />
-                        )
-                    )}
+                <h1 ref={this.cEdit.bind(this)} id="stage-name" className="title">{user.stageName}</h1>
+                <Linkify>
+                    <div ref={this.cEdit.bind(this)} id="bio" style={{whiteSpace: "pre-wrap"}}>
+                        {user.bio}
+                    </div>
+                </Linkify>
+                <div>
+                    <SoundCloud url={this.soundcloudParser(user.bio)} opts={{visual: true, auto_play: false}} />
                 </div>
             </div>
         );
